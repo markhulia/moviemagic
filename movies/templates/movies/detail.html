@@ -1,0 +1,7 @@
+<h1>{{ movie.title }}</h1>
+<p>{{ movie.release_year }}</p>
+<ul>
+{% for g in movie.genre_set.all %}
+    <div>{{ g.genre }}</div>
+{% endfor %}
+</ul>
