@@ -1,19 +1,22 @@
-from django.shortcuts import get_object_or_404, render
-
+from django.views import generic
 from .models import Movie
 
 
-def index(request):
-    latest_movies = Movie.objects.order_by('title')
+# List view displays a list of objects (i.e. Movies)
+class IndexView(generic.ListView):
+    # List view needs a context to be provided explicitly, otherwise a
+    context_object_name = 'latest_movies'
+    template_name = 'movies/index.html'
 
-    context = {
-        'latest_movies': latest_movies
-    }
-    return render(request, 'movies/index.html', context)
+    def get_queryset(self):
+        return Movie.objects.order_by('title')
 
 
-def detail(request, movie_id):
-    movie = get_object_or_404(Movie, id=movie_id)
-    # response = '{} {} {} {}'.format(movie.title, movie.release_year, movie.user_rating,
-    #                                 str([g for g in movie.genre_set.all()]))
-    return render(request, 'movies/detail.html', {'movie': movie})
+# Detail view displays a details of a Movie object
+class DetailView(generic.DeleteView):
+    # For DetailView the question variable is provided automatically – since we’re using a Django model(Question),
+    # Django is able to determine an appropriate name for the context variable.
+    # Also the DetailView generic view expects the primary key value captured from the URL to be called "pk",
+    # so we’ve changed question_id to pk for the generic views in polls/urls.py
+    model = Movie
+    template_name = 'movies/detail.html'
